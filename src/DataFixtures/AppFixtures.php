@@ -60,8 +60,10 @@ class AppFixtures extends Fixture
 
             $customer->setEmail($firstname . "." . $lastname . "@mail.com");
             $customer->setPlainPassword('pass');
-            $customer->setGenre('Non renseigné');
+            $customer->setGender('Non renseigné');
             $customer->setBirthdate($this->faker->dateTimeBetween('-90 years', '-8 years')); // Date de naissance entre -40 et -18 ans
+            $customer->setAgreeTerm('1');
+            $customer->setIsVerified('1');
             
             $users[] = $customer;
 

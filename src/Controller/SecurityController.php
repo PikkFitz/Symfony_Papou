@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Customer;
+use App\Form\RegistrationType;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,6 +13,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+
     #[Route('/login', name: 'security.login', methods:['GET', 'POST'])]
      /**
      * This controller allows us to login
@@ -50,6 +55,42 @@ class SecurityController extends AbstractController
     public function logout()
     {
         // Nothing to do here...
+    }
+
+
+    #[Route('/inscription', name: 'security.registration', methods:['GET', 'POST'])]
+    /**
+     * This controller allows us to register
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    public function registration(Request $request, EntityManagerInterface $manager) : Response
+    {
+        $customer = new Customer();
+        $form = $this->createForm(RegistrationType::class, $customer);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            $customer = $form->getData();
+
+            // !!!!! MESSAGE FLASH !!!!!
+            $this->addFlash(
+                'success',  // Nom de l'alerte 
+                ['info' => 'Création du compte', 'bonus' => 'Le compte utilsateur de M./Mme "'. $customer->getFirstname() . ' ' . $customer->getLastname() .'" a bien été créé !']  // Message(s)
+            );
+
+            $manager->persist($customer);
+            $manager->flush();
+
+            return $this->redirectToRoute('security.login');
+        }
+
+        return $this->render('pages/security/registration.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
 

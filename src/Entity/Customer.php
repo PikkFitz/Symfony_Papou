@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,10 +23,18 @@ class Customer extends User
 
     #[ORM\Column(length: 50)]
     #[Assert\NotNull()]
-    private ?string $genre = null;
+    private ?string $gender = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $birthdate = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $birthdate = null;
+
+    #[ORM\Column]
+    #[Assert\NotNull()]
+    private ?bool $agreeTerm = null;
+
+    #[ORM\Column(type: 'boolean')]
+    #[Assert\NotNull()]
+    private $isVerified = false;
 
     #[ORM\OneToMany(mappedBy: 'customer', targetEntity: Address::class, orphanRemoval: true)]
     private Collection $addresses;
@@ -63,14 +70,14 @@ class Customer extends User
         return $this;
     }
 
-    public function getGenre(): ?string
+    public function getGender(): ?string
     {
-        return $this->genre;
+        return $this->gender;
     }
 
-    public function setGenre(string $genre): static
+    public function setGender(string $gender): static
     {
-        $this->genre = $genre;
+        $this->gender = $gender;
 
         return $this;
     }
@@ -83,6 +90,30 @@ class Customer extends User
     public function setBirthdate(\DateTimeInterface $birthdate): static
     {
         $this->birthdate = $birthdate;
+
+        return $this;
+    }
+
+    public function isAgreeTerm(): ?bool
+    {
+        return $this->agreeTerm;
+    }
+
+    public function setAgreeTerm(bool $agreeTerm): self
+    {
+        $this->agreeTerm = $agreeTerm;
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
